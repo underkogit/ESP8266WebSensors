@@ -1,0 +1,112 @@
+:root {
+   --bg: #191919;
+   --panel: #0b1220;
+   --card: #0f2433;
+   --accent: #2dd4bf;
+   --muted: #94a3b8;
+   --text: #e6eef6;
+   --glass: rgba(255, 255, 255, 0.04);
+}
+html,
+body {
+   height: 100%;
+   margin: 0;
+   font-family: Inter, Roboto, system-ui, -apple-system, "Segoe UI",
+      "Helvetica Neue", Arial;
+}
+body {
+   background: var(--bg);
+   color: var(--text);
+   display: flex;
+   align-items: stretch;
+   padding: 24px;
+}
+
+/* Страница */
+.page-title {
+   margin: 0;
+   font-size: 18px;
+   color: var(--muted);
+}
+
+/* Правый верхний угол — контейнер данных */
+.sidebar {
+   position: fixed;
+   right: 18px;
+   top: 18px;
+   width: 300px;
+   max-width: calc(100% - 36px);
+   backdrop-filter: blur(6px);
+   background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.01)
+   );
+   border: 1px solid rgba(255, 255, 255, 0.04);
+   border-radius: 12px;
+   padding: 12px;
+   box-shadow: 0 6px 24px rgba(2, 6, 23, 0.6);
+}
+
+/* Секция датчика */
+.sensor {
+   display: flex;
+   flex-direction: column;
+   gap: 8px;
+   padding: 10px;
+   border-radius: 8px;
+   background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.01),
+      rgba(255, 255, 255, 0.015)
+   );
+   margin-bottom: 10px;
+   border: 1px solid rgba(255, 255, 255, 0.02);
+}
+.sensor:last-child {
+   margin-bottom: 0;
+}
+
+.sensor-header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   gap: 8px;
+}
+.sensor-name {
+   font-weight: 600;
+   color: var(--text);
+   font-size: 14px;
+   text-transform: uppercase;
+   letter-spacing: 0.6px;
+}
+.sensor-meta {
+   font-size: 12px;
+   color: var(--muted);
+}
+
+/* Параметр (темп, влажность и т.д.) */
+.param {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 8px;
+   border-radius: 6px;
+   background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.01),
+      rgba(255, 255, 255, 0.005)
+   );
+   border: 1px solid rgba(255, 255, 255, 0.02);
+}
+.param-name {
+   font-size: 13px;
+   color: var(--muted);
+}
+.param-value {
+   font-weight: 700;
+   color: var(--accent);
+   font-size: 14px;
+}
+
+ 
