@@ -19,11 +19,11 @@ bool connectToWiFi()
     const int maxAttempts = 5; // Максимальное количество попыток
 
     // Пытаемся подключиться, пока не установлено соединение или не исчерпаны все попытки
-    while (WiFi.status() != WL_CONNECTED && attempts < maxAttempts)
+    while (WiFi.status() != WL_CONNECTED  )
     {
         delay(1000); // Задержка перед следующей попыткой
         Serial.println("Attempting to connect...");
-        attempts++;
+         
     }
 
     // Проверка статуса подключения
