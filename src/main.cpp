@@ -20,6 +20,21 @@ void setupRoutes()
     server.on("/", []()
               { server.send(200, "text/html", htmlContent); });
 
+    server.on("/api/ping", []()
+              {
+                server.sendHeader("Access-Control-Allow-Origin", "*");  
+                server.sendHeader("Access-Control-Allow-Methods", "GET, OPTIONS");
+                server.sendHeader("Access-Control-Allow-Headers", "Content-Type");
+                StaticJsonDocument<500> doc;   
+
+          
+                    doc["status"] = true;
+             
+                String jsonOutput;
+                serializeJsonPretty(doc, jsonOutput);
+
+                server.send(200, "application/json", jsonOutput); });
+
     server.on("/api/restart", []()
               { ESP.restart(); });
 
