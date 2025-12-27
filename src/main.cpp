@@ -3,6 +3,7 @@
 #include <ESP8266WebServer.h>
 #include "Adafruit_SHT31.h"
 #include "webui.h"
+// #include "webuiWallpaper.h"
 #include <chipStatus.h>
 #include <Adafruit_AHTX0.h>
 #include <Adafruit_BMP280.h>
@@ -17,8 +18,10 @@ Adafruit_BMP280 bmp280;
 
 void setupRoutes()
 {
-    server.on("/", []()
-              { server.send(200, "text/html", htmlContent); });
+    server.on("/ui", []()
+              { server.send(200, "text/html", htmlContentWebui); });
+    // server.on("/ui2", []()
+    //           { server.send(200, "text/html", webuiWallpaper); });
 
     server.on("/api/ping", []()
               {

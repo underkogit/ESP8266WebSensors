@@ -29,6 +29,33 @@ body {
    color: var(--muted);
 }
 
+.chart-section {
+   width: 100%;
+   overflow: hidden;
+}
+ 
+@media (max-width: 640px) {
+   .sidebar {
+      padding: 16px;
+      margin: 12px;
+      width: calc(100% - 24px);
+      max-width: none;
+   }
+
+   #chart-container {
+      margin: 12px;
+      width: calc(100% - 24px);
+      max-width: none;
+   }
+}
+
+/* Темная тема для графика */
+@media (prefers-color-scheme: dark) {
+   #sensor-chart {
+      filter: brightness(0.95);
+   }
+}
+
 /* Правый верхний угол — контейнер данных */
 .sidebar {
    position: fixed;
@@ -108,5 +135,3 @@ body {
    color: var(--accent);
    font-size: 14px;
 }
-
- 

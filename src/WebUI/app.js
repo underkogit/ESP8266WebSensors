@@ -1,7 +1,16 @@
 let host = "http://192.168.0.100";
 let API_URL = host + "/api/sensors";
+let sensorChart = null;
+let pollingHandle = null;
+let isFetching = false;
 const POLL_INTERVAL_MS = 1000;
 const REQUEST_TIMEOUT_MS = 800;
+
+const PARAM_COLORS = {
+   temperature: "rgba(239, 68, 68, 0.8)", // красный
+   humidity: "rgba(59, 130, 246, 0.8)", // синий
+   pressure: "rgba(139, 92, 246, 0.8)", // фиолетовый
+};
 
 function formatNumber(n) {
    return (Math.round(n * 100) / 100).toLocaleString("ru-RU", {
@@ -44,10 +53,47 @@ async function pingRange(startIP, endIP) {
    return successfulPings; // Возвращаем массив с успешными результатами
 }
 
+function updateChartData(sensorKey, paramName, value) {
+   if (!sensorChart) {
+      sensorChart = initSensorChart();
+      if (!sensorChart) return;
+   }
+
+   // Если изменился датчик или параметр, очищаем график
+   if (currentSensorKey !== sensorKey || currentParamName !== paramName) {
+      sensorChart.data.datasets[0].data = [];
+      currentSensorKey = sensorKey;
+      currentParamName = paramName;
+      sensorChart.data.datasets[0].label = `${sensorKey} - ${paramName}`;
+   }
+
+   // Добавляем новое значение
+   const timestamp = Date.now();
+   sensorChart.data.datasets[0].data.push({
+      x: timestamp,
+      y: value,
+   });
+
+   // Ограничиваем количество точек
+   if (sensorChart.data.datasets[0].data.length > MAX_DATA_POINTS) {
+      sensorChart.data.datasets[0].data.shift();
+   }
+
+   // Обновляем график
+   sensorChart.update("none");
+}
+
+function createElementA(nameElement, className, textContent) {
+   const name = document.createElement(nameElement);
+   name.className = className;
+   name.textContent = textContent;
+   return name;
+}
+
 function renderSidebar(containerId, sensors) {
    const container = document.getElementById(containerId);
    if (!container) return;
-   container.innerHTML = ""; // очистить
+   container.innerHTML = "";
 
    Object.entries(sensors).forEach(([key, sensor]) => {
       const section = document.createElement("section");
@@ -56,16 +102,15 @@ function renderSidebar(containerId, sensors) {
       const header = document.createElement("div");
       header.className = "sensor-header";
 
-      const name = document.createElement("div");
-      name.className = "sensor-name";
-      name.textContent = key;
+      header.appendChild(createElementA("div", "sensor-name", key));
+      header.appendChild(
+         createElementA(
+            "div",
+            "sensor-meta",
+            Object.keys(sensor).length + " параметр(ы)"
+         )
+      );
 
-      const meta = document.createElement("div");
-      meta.className = "sensor-meta";
-      meta.textContent = Object.keys(sensor).length + " параметр(ы)";
-
-      header.appendChild(name);
-      header.appendChild(meta);
       section.appendChild(header);
 
       Object.entries(sensor).forEach(([pname, pval]) => {
@@ -92,7 +137,6 @@ function renderSidebar(containerId, sensors) {
    });
 }
 
-// fetch с таймаутом
 function fetchWithTimeout(url, timeout = REQUEST_TIMEOUT_MS) {
    const controller = new AbortController();
    const id = setTimeout(() => controller.abort(), timeout);
@@ -101,11 +145,8 @@ function fetchWithTimeout(url, timeout = REQUEST_TIMEOUT_MS) {
    );
 }
 
-let pollingHandle = null;
-let isFetching = false;
-
 async function pollOnce() {
-   if (isFetching) return; // пропустить, если предыдущий запрос ещё выполняется
+   if (isFetching) return;
    isFetching = true;
    try {
       const res = await fetchWithTimeout(API_URL);
@@ -113,7 +154,6 @@ async function pollOnce() {
       const json = await res.json();
       renderSidebar("sensor-sidebar", json);
    } catch (err) {
-      // Показываем ошибку в сайдбаре (минимально)
       const container = document.getElementById("sensor-sidebar");
       if (container) {
          container.innerHTML = `<div class="sensor"><div class="sensor-header"><div class="sensor-name">Ошибка</div><div class="sensor-meta">${err.message}</div></div></div>`;
@@ -125,14 +165,12 @@ async function pollOnce() {
 }
 
 function startPolling() {
-   // Немедленный первый запрос
-   pollOnce();
    pingRange("192.168.0.100", "192.168.0.130").then((successfulPings) => {
       host = "http://" + successfulPings.map((result) => result.ip)[0];
       API_URL = host + "/api/sensors";
-      console.log("", host);
+      console.log(host);
    });
-   // Интервал для последующих; setInterval допускает накопление — но мы предотвращаем перекрытие isFetching
+   pollOnce();
    pollingHandle = setInterval(pollOnce, POLL_INTERVAL_MS);
 }
 
@@ -144,8 +182,8 @@ function stopPolling() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-   renderSidebar("sensor-sidebar", {}); // начальный пустой рендер
+   renderSidebar("sensor-sidebar", {});
    startPolling();
-   // Остановить при выгрузке страницы
+   window.sensorChart = initChart();
    window.addEventListener("beforeunload", stopPolling);
 });

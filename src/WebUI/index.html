@@ -1,16 +1,31 @@
 <!DOCTYPE html>
+
 <html lang="ru">
    <head>
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width,initial-scale=1" />
-      
+
       <link rel="stylesheet" href="styles.css" />
    </head>
    <body>
-      <main></main>
+      <aside class="sidebar">
+         <div id="sensor-sidebar" aria-live="polite"></div>
 
-      <aside class="sidebar" id="sensor-sidebar" aria-live="polite"></aside>
+         <div
+            class="chart-section"
+            style="
+               margin-top: 20px;
+               padding-top: 20px;
+               border-top: 1px solid rgba(255, 255, 255, 0.05);
+            "
+         >
+            <div style="height: 180px">
+               <canvas id="sensor-chart"></canvas>
+            </div>
+         </div>
+      </aside>
 
+      <script src="chart.js"></script>
       <script src="app.js"></script>
    </body>
 </html>
