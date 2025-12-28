@@ -20,8 +20,6 @@ void setupRoutes()
 {
     server.on("/ui", []()
               { server.send(200, "text/html", htmlContentWebui); });
-    // server.on("/ui2", []()
-    //           { server.send(200, "text/html", webuiWallpaper); });
 
     server.on("/api/ping", []()
               {
